@@ -1,0 +1,140 @@
+// COPYRIGHTS.© ABANOB AYOUB 
+// Description: 
+//the 'findKthSmallest' function repeatedly applies the partition procedure to divide the array 
+//into two partitions with median-of-medians pivot selection until the kth smallest element is found
+package com.mycompany.kthquicksortmm;
+
+import java.util.Random;
+import java.util.Scanner;
+
+
+
+
+public class KthQuickSortMM {
+    public static int[] generateRandomInput(int sizeLimit){
+        int[] list = new int[sizeLimit];
+        Random random =new Random();
+        for (int i = 0; i < sizeLimit; i++) {
+          list[i]=random.nextInt();
+        }
+        return list;
+    }
+    
+      public static void printInput(int[] a, int r){
+    
+          for(int i=0;i<r;i++){
+      
+        System.out.print(a[i]+" ");
+    }
+    System.out.println("\n");
+  }
+    
+    public static void main(String[] args) {
+        
+        //Getting the size limit of input list
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter an intger list size: ");
+        int r = input.nextInt();
+        
+        //Generate random list input
+        int[] arr = generateRandomInput(r);
+        
+        //Print the input list intgers
+        printInput(arr,r);
+        
+        //Setup the K-th smallest number you want to get
+        int k = 1;
+ 
+        //Start the timer
+        long startTime = System.nanoTime();
+        
+        //Call the Function
+        int result= findKthSmallest(arr,k);
+          
+        //Stop the timer
+        long endTime = System.nanoTime();
+        
+        //Calculate excution time
+        double executionTimeInSeconds = (endTime - startTime) / 1000000000.0;
+        
+        //Print the result K-th Smallest number
+        System.out.println(k + "th smallest element is " + result);
+        
+        //Print excution time    
+        System.out.println("Algorithm Execution Time: " + executionTimeInSeconds + " seconds");
+    }
+    
+    
+    
+    public static int findKthSmallest(int[] arr, int k) {
+    if (k < 1 || k > arr.length) {
+        throw new IllegalArgumentException("k is out of range");
+    }
+    return findKthSmallestHelper(arr, k, 0, arr.length - 1);
+}
+
+public static int findKthSmallestHelper(int[] arr, int k, int left, int right) {
+    if (left == right) {
+        return arr[left];
+    }
+    int pivotIndex = getPivotIndex(arr, left, right);
+    pivotIndex = partition(arr, left, right, pivotIndex);
+    if (k - 1 == pivotIndex) {
+        return arr[pivotIndex];
+    } else if (k - 1 < pivotIndex) {
+        return findKthSmallestHelper(arr, k, left, pivotIndex - 1);
+    } else {
+        return findKthSmallestHelper(arr, k, pivotIndex + 1, right);
+    }
+}
+
+public static int getPivotIndex(int[] arr, int left, int right) {
+    if (right - left < 5) {
+        return partition5(arr, left, right);
+    }
+    int i, j;
+    for (i = left; i <= right; i += 5) {
+        j = Math.min(i + 4, right);
+        int medianIndex = partition5(arr, i, j);
+        swap(arr, medianIndex, left + (int)Math.floor((i - left) / 5));
+    }
+    int mid = (left + (int)Math.ceil((right - left) / 10.0));
+    return getPivotIndex(arr, left, mid);
+}
+
+public static int partition(int[] arr, int left, int right, int pivotIndex) {
+    int pivotValue = arr[pivotIndex];
+    swap(arr, pivotIndex, right);
+    int storeIndex = left;
+    for (int i = left; i < right; i++) {
+        if (arr[i] < pivotValue) {
+            swap(arr, i, storeIndex);
+            storeIndex++;
+        }
+    }
+    swap(arr, storeIndex, right);
+    return storeIndex;
+}
+
+public static int partition5(int[] arr, int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    return left + (right - left) / 2;
+}
+
+public static void swap(int[] arr, int i, int j) {
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+}
+// COPYRIGHTS.© ABANOB AYOUB 
+// COPYRIGHTS.© ABANOB AYOUB 
